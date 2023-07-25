@@ -1,30 +1,51 @@
-#ifndef SORT_H
-#define SORT_H
-
-#include <stddef.h>
+#include "sort.h"
 
 /**
- * struct listint_s - Doubly linked list node
+ * insertion_sort_list - Sort a given array using the Insertion
+ * sort algorithm in the ascending order.
  *
- * @n: Integer stored in the node
- * @prev: Pointer to the previous element of the list
- * @next: Pointer to the next element of the list
- */
-typedef struct listint_s
+ * @list: The list to be sorted.
+ *
+ **/
+void insertion_sort_list(listint_t **list)
 {
-    const int n;
-    struct listint_s *prev;
-    struct listint_s *next;
-} listint_t;
+	listint_t *sorted = NULL, *unsorted = NULL, *temp = NULL;
 
-void print_array(const int *array, size_t size);
-void print_list(const listint_t *list);
-void bubble_sort(int *array, size_t size);
-void insertion_sort_list(listint_t **list);
-void selection_sort(int *array, size_t size);
-void quick_sort(int *array, size_t size);
-int get_pivot_index(int *array, size_t size, int first, int last);
-void sort_partition(int *array, int size, int first, int last);
-void swap(int **array, int first_index, int second_index);
-
-#endif
+	if (list == NULL || (*list)->next == NULL)
+		return;
+	unsorted = (*list)->next;
+	while (unsorted != NULL)
+	{
+		sorted = unsorted->prev;
+		temp = unsorted->next;
+		while (sorted != NULL)
+		{
+			if (unsorted->n < sorted->n)
+			{
+				sorted = sorted->prev;
+				if (unsorted->next != NULL)
+				{
+					unsorted->next->prev = unsorted->prev;
+				}
+				unsorted->prev->next = unsorted->next;
+				unsorted->prev = sorted;
+				if (sorted == NULL)
+				{
+					(*list)->prev = unsorted;
+					unsorted->next = *list;
+					*list = unsorted;
+				}
+				else
+				{
+					sorted->next->prev = unsorted;
+					unsorted->next = sorted->next;
+					sorted->next = unsorted;
+				}
+				print_list(*list);
+			}
+			else
+				break;
+		}
+		unsorted = temp;
+	}
+}
